@@ -14,11 +14,11 @@
   },
   "devDependencies": {
     "@babel/cli": "7.25.6",
-    "@babel/core": "7.25.2",
+    "@babel/core": "7.29.7",
     "@babel/preset-env": "7.25.4",
     "@babel/preset-react": "7.24.7",
     "@babel/preset-typescript": "7.24.7",
-    "@babel/runtime": "7.25.6",
+    "@babel/runtime": "7.29.7",
     "@emotion/babel-preset-css-prop": "11.2.0",
     "@emotion/react": "11.9.0",
     "@mattermost/client": "11.1.0",
@@ -34,7 +34,7 @@
     "@types/react-router-dom": "5.1.5",
     "@types/react-transition-group": "4.4.0",
     "@typescript-eslint/eslint-plugin": "7.18.0",
-    "@typescript-eslint/parser": "7.0.2",
+    "@typescript-eslint/parser": "7.18.0",
     "babel-loader": "9.1.2",
     "babel-plugin-formatjs": "10.3.7",
     "babel-plugin-typescript-to-proptypes": "2.0.0",
@@ -51,7 +51,7 @@
     "sass": "1.52.3",
     "sass-loader": "13.0.0",
     "style-loader": "3.3.1",
-    "webpack": "5.95.0",
+    "webpack": "5.109.2",
     "webpack-cli": "5.1.4"
   },
   "dependencies": {
@@ -99,6 +99,9 @@
     "setupFilesAfterEnv": [
       "<rootDir>/tests/setup.tsx"
     ],
-    "testURL": "http://localhost:8065"
+    "testEnvironment": "jsdom",
+    "testEnvironmentOptions": {
+      "url": "http://localhost:8065"
+    }
   }
 }

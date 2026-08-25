@@ -8,16 +8,25 @@ import type {GlobalState} from '@mattermost/types/store';
 
 import type {PluginRegistry} from 'types/mattermost-webapp';
 
+import MarkdownFilePreview from './components/markdown_file_preview';
+import {isMarkdownFile} from './markdown_file';
+import './styles.scss';
+
 export default class Plugin {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
     public async initialize(registry: PluginRegistry, store: Store<GlobalState>) {
-        // @see https://developers.mattermost.com/extend/plugins/webapp/reference/
+        registry.registerFilePreviewComponent(isMarkdownFile, MarkdownFilePreview);
     }
 }
 
 declare global {
     interface Window {
+        basename?: string;
         registerPlugin(pluginId: string, plugin: Plugin): void;
+        PostUtils: {
+            formatText(text: string, options?: Record<string, unknown>): string;
+            messageHtmlToComponent(html: string, isRHS?: boolean, options?: Record<string, unknown>): React.ReactNode;
+        };
     }
 }
 

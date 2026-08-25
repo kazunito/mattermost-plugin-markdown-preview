@@ -1,223 +1,138 @@
-# Plugin Starter Template
+# Mattermost Markdown File Preview
 
-[![Build Status](https://github.com/mattermost/mattermost-plugin-starter-template/actions/workflows/ci.yml/badge.svg)](https://github.com/mattermost/mattermost-plugin-starter-template/actions/workflows/ci.yml)
-[![E2E Status](https://github.com/mattermost/mattermost-plugin-starter-template/actions/workflows/e2e.yml/badge.svg)](https://github.com/mattermost/mattermost-plugin-starter-template/actions/workflows/e2e.yml)
+[日本語](#日本語) | [English](#english)
 
-This plugin serves as a starting point for writing a Mattermost plugin. Feel free to base your own plugin off this repository.
+## 日本語
 
-To learn more about plugins, see [our plugin documentation](https://developers.mattermost.com/extend/plugins/).
+Mattermostに添付された `.md` / `.markdown` ファイルを、ダウンロードせず文書として閲覧できるWeb Appプラグインです。
 
-This template requires node v16 and npm v8. You can download and install nvm to manage your node versions by following the instructions [here](https://github.com/nvm-sh/nvm). Once you've setup the project simply run `nvm i` within the root folder to use the suggested version of node.
+### 主な機能
 
-## Getting Started
-Use GitHub's template feature to make a copy of this repository by clicking the "Use this template" button.
+- 添付Markdownファイルをクリックしてプレビュー
+- 紙面風の文書表示と見出しから生成する目次
+- 見出し、表、コードブロック、引用、画像の読みやすい表示
+- 文書表示とMarkdown原文表示の切り替え
+- Mattermostのライト／ダークテーマに対応
+- Mattermostの認証済みファイルAPIを使用し、既存のアクセス権を維持
+- 外部サービスへファイル内容を送信しない
 
-Alternatively shallow clone the repository matching your plugin name:
-```
-git clone --depth 1 https://github.com/mattermost/mattermost-plugin-starter-template com.example.my-plugin
-```
+### 対応環境
 
-Note that this project uses [Go modules](https://github.com/golang/go/wiki/Modules). Be sure to locate the project outside of `$GOPATH`.
+- Mattermost Server 11.8以降
+- Mattermost WebおよびDesktopクライアント
 
-Edit the following files:
-1. `plugin.json` with your `id`, `name`, and `description`:
-```json
-{
-    "id": "com.example.my-plugin",
-    "name": "My Plugin",
-    "description": "A plugin to enhance Mattermost."
-}
-```
+Mattermost Mobileのカスタムファイルプレビューには対応していません。
 
-2. `go.mod` with your Go module path, following the `<hosting-site>/<repository>/<module>` convention:
-```
-module github.com/example/my-plugin
-```
+### インストール
 
-3. Replace all occurrences of `github.com/mattermost/mattermost-plugin-starter-template` in the codebase with your Go module path:
-```bash
-sed -i '' 's|github.com/mattermost/mattermost-plugin-starter-template|github.com/example/my-plugin|g' server/*.go
-```
+#### システムコンソールから
 
-4. Replace `.golangci.yml` `local-prefixes` attribute with your Go module path:
-```yml
-linters-settings:
-  # [...]
-  goimports:
-    local-prefixes: github.com/example/my-plugin
+1. [Releases](https://github.com/kazunito/mattermost-plugin-markdown-preview/releases)から最新の `com.kazunito.markdown-preview-*.tar.gz` をダウンロードします。
+2. Mattermostへシステム管理者としてログインします。
+3. **システムコンソール > プラグイン > プラグイン管理**を開きます。
+4. **プラグインをアップロードする**から `.tar.gz` をアップロードします。
+5. **Markdown File Preview**を有効にします。
+6. `.md` ファイルを投稿し、添付ファイル名をクリックして表示を確認します。
+
+プラグインアップロードが無効の場合は、Mattermostの `PluginSettings.EnableUploads` を有効にするか、次のローカルモードを使用してください。
+
+#### mmctlローカルモードから
+
+Mattermostサーバー上で実行します。
+
+```sh
+mmctl --local plugin add com.kazunito.markdown-preview-0.1.1.tar.gz --force
+mmctl --local plugin enable com.kazunito.markdown-preview
 ```
 
-5. Build your plugin:
-```
-make
-```
+更新後はブラウザを再読み込みします。古い画面が残る場合は、`Command + Shift + R`または`Ctrl + Shift + R`で強制再読み込みしてください。
 
-This will produce a single plugin file (with support for multiple architectures) for upload to your Mattermost server:
+### アンインストール
 
-```
-dist/com.example.my-plugin.tar.gz
-```
+システムコンソールで無効化して削除するか、Mattermostサーバー上で次を実行します。
 
-## Development
-
-To avoid having to manually install your plugin, build and deploy your plugin using one of the following options. In order for the below options to work, you must first enable plugin uploads via your config.json or API and restart Mattermost.
-
-```json
-    "PluginSettings" : {
-        ...
-        "EnableUploads" : true
-    }
+```sh
+mmctl --local plugin disable com.kazunito.markdown-preview
+mmctl --local plugin delete com.kazunito.markdown-preview
 ```
 
-### Development guidance
+### ソースからビルド
 
-1. Fewer packages is better: default to the main package unless there's good reason for a new package.
+Node.js、npm、Goが必要です。
 
-2. Coupling implies same package: don't jump through hoops to break apart code that's naturally coupled.
-
-3. New package for a new interface: a classic example is the sqlstore with layers for monitoring performance, caching and mocking.
-
-4. New package for upstream integration: a discrete client package for interfacing with a 3rd party is often a great place to break out into a new package
-
-### Modifying the server boilerplate
-
-The server code comes with some boilerplate for creating an api, using slash commands, accessing the kvstore and using the cluster package for jobs.
-
-#### Api
-
-api.go implements the ServeHTTP hook which allows the plugin to implement the http.Handler interface. Requests destined for the `/plugins/{id}` path will be routed to the plugin. This file also contains a sample `HelloWorld` endpoint that is tested in plugin_test.go.
-
-#### Command package
-
-This package contains the boilerplate for adding a slash command and an instance of it is created in the `OnActivate` hook in plugin.go. If you don't need it you can delete the package and remove any reference to `commandClient` in plugin.go. The package also contains an example of how to create a mock for testing.
-
-#### KVStore package
-
-This is a central place for you to access the KVStore methods that are available in the `pluginapi.Client`. The package contains an interface for you to define your methods that will wrap the KVStore methods. An instance of the KVStore is created in the `OnActivate` hook.
-
-### Deploying with Local Mode
-
-If your Mattermost server is running locally, you can enable [local mode](https://docs.mattermost.com/administration/mmctl-cli-tool.html#local-mode) to streamline deploying your plugin. Edit your server configuration as follows:
-
-```json
-{
-    "ServiceSettings": {
-        ...
-        "EnableLocalMode": true,
-        "LocalModeSocketLocation": "/var/tmp/mattermost_local.socket"
-    },
-}
+```sh
+make dist
 ```
 
-and then deploy your plugin:
-```
-make deploy
-```
+インストール用ファイルは `dist/com.kazunito.markdown-preview-0.1.1.tar.gz` に生成されます。
 
-You may also customize the Unix socket path:
-```bash
-export MM_LOCALSOCKETPATH=/var/tmp/alternate_local.socket
-make deploy
-```
+### 制限事項
 
-If developing a plugin with a webapp, watch for changes and deploy those automatically:
-```bash
-export MM_SERVICESETTINGS_SITEURL=http://localhost:8065
-export MM_ADMIN_TOKEN=j44acwd8obn78cdcx7koid4jkr
-make watch
-```
+- プレビュー上限は2MBです。上限を超えるファイルもダウンロードできます。
+- Markdown内の相対画像パスは自動解決されません。
+- Mermaidなどの非標準Markdown拡張は、現時点ではコードブロックとして表示されます。
 
-### Deploying with credentials
+### トラブルシューティング
 
-Alternatively, you can authenticate with the server's API with credentials:
-```bash
-export MM_SERVICESETTINGS_SITEURL=http://localhost:8065
-export MM_ADMIN_USERNAME=admin
-export MM_ADMIN_PASSWORD=password
-make deploy
-```
+- 白い画面になる場合は、最新Releaseへ更新してブラウザを強制再読み込みしてください。
+- アップロード時にHTTP 413になる場合は、Mattermostの前段にあるリバースプロキシのアップロード容量制限を確認してください。
+- プラグインを更新できない場合は、`mmctl --local plugin add ... --force`を使用してください。
 
-or with a [personal access token](https://docs.mattermost.com/developer/personal-access-tokens.html):
-```bash
-export MM_SERVICESETTINGS_SITEURL=http://localhost:8065
-export MM_ADMIN_TOKEN=j44acwd8obn78cdcx7koid4jkr
-make deploy
-```
+## English
 
-### Releasing new versions
+A Mattermost web app plugin that renders attached `.md` and `.markdown` files in a document-style preview without requiring a download.
 
-The version of a plugin is determined at compile time, automatically populating a `version` field in the [plugin manifest](plugin.json):
-* If the current commit matches a tag, the version will match after stripping any leading `v`, e.g. `1.3.1`.
-* Otherwise, the version will combine the nearest tag with `git rev-parse --short HEAD`, e.g. `1.3.1+d06e53e1`.
-* If there is no version tag, an empty version will be combined with the short hash, e.g. `0.0.0+76081421`.
+### Features
 
-To disable this behaviour, manually populate and maintain the `version` field.
+- Opens Markdown attachments in Mattermost's file preview modal
+- Paper-like document view with a generated table of contents
+- Polished headings, tables, code blocks, quotes, and images
+- Switches between rendered preview and Markdown source
+- Supports Mattermost light and dark themes
+- Preserves existing file permissions through Mattermost's authenticated file API
+- Never sends file contents to an external service
 
-## How to Release
+### Compatibility
 
-To trigger a release, follow these steps:
+- Mattermost Server 11.8 or later
+- Mattermost Web and Desktop clients
 
-1. **For Patch Release:** Run the following command:
-    ```
-    make patch
-    ```
-   This will release a patch change.
+Custom file previews are not currently supported in Mattermost Mobile.
 
-2. **For Minor Release:** Run the following command:
-    ```
-    make minor
-    ```
-   This will release a minor change.
+### Install
 
-3. **For Major Release:** Run the following command:
-    ```
-    make major
-    ```
-   This will release a major change.
+1. Download the latest `com.kazunito.markdown-preview-*.tar.gz` from [Releases](https://github.com/kazunito/mattermost-plugin-markdown-preview/releases).
+2. Sign in to Mattermost as a system administrator.
+3. Open **System Console > Plugins > Plugin Management**.
+4. Upload the `.tar.gz` bundle.
+5. Enable **Markdown File Preview**.
+6. Upload a `.md` file to a post and click its filename.
 
-4. **For Patch Release Candidate (RC):** Run the following command:
-    ```
-    make patch-rc
-    ```
-   This will release a patch release candidate.
+Alternatively, install it on the Mattermost server using local mode:
 
-5. **For Minor Release Candidate (RC):** Run the following command:
-    ```
-    make minor-rc
-    ```
-   This will release a minor release candidate.
-
-6. **For Major Release Candidate (RC):** Run the following command:
-    ```
-    make major-rc
-    ```
-   This will release a major release candidate.
-
-## Q&A
-
-### How do I make a server-only or web app-only plugin?
-
-Simply delete the `server` or `webapp` folders and remove the corresponding sections from `plugin.json`. The build scripts will skip the missing portions automatically.
-
-### How do I include assets in the plugin bundle?
-
-Place them into the `assets` directory. To use an asset at runtime, build the path to your asset and open as a regular file:
-
-```go
-bundlePath, err := p.API.GetBundlePath()
-if err != nil {
-    return errors.Wrap(err, "failed to get bundle path")
-}
-
-profileImage, err := ioutil.ReadFile(filepath.Join(bundlePath, "assets", "profile_image.png"))
-if err != nil {
-    return errors.Wrap(err, "failed to read profile image")
-}
-
-if appErr := p.API.SetProfileImage(userID, profileImage); appErr != nil {
-    return errors.Wrap(err, "failed to set profile image")
-}
+```sh
+mmctl --local plugin add com.kazunito.markdown-preview-0.1.1.tar.gz --force
+mmctl --local plugin enable com.kazunito.markdown-preview
 ```
 
-### How do I build the plugin with unminified JavaScript?
-Setting the `MM_DEBUG` environment variable will invoke the debug builds. The simplist way to do this is to simply include this variable in your calls to `make` (e.g. `make dist MM_DEBUG=1`).
+Reload Mattermost after updating the plugin. Use a hard refresh if the previous web bundle remains cached.
+
+### Build from source
+
+Node.js, npm, and Go are required.
+
+```sh
+make dist
+```
+
+The installable bundle is generated at `dist/com.kazunito.markdown-preview-0.1.1.tar.gz`.
+
+### Known limitations
+
+- The preview limit is 2 MB; larger files remain downloadable.
+- Relative image paths are not resolved automatically.
+- Mermaid and other non-standard Markdown extensions are currently shown as code blocks.
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for attribution.

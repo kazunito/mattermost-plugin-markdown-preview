@@ -1,4 +1,4 @@
-module github.com/mattermost/mattermost-plugin-starter-template
+module github.com/kazunito/mattermost-plugin-markdown-preview
 
 go 1.25
 
