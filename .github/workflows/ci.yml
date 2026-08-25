@@ -27,6 +27,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
         working-directory: webapp
+      - name: Generate plugin manifest
+        run: make apply
       - name: Type check
         run: npm run check-types
         working-directory: webapp
