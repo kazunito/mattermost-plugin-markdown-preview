@@ -41,7 +41,7 @@ Mattermost Mobileのカスタムファイルプレビューには対応してい
 Mattermostサーバー上で実行します。
 
 ```sh
-mmctl --local plugin add com.kazunito.markdown-preview-0.1.2.tar.gz --force
+mmctl --local plugin add com.kazunito.markdown-preview-0.1.3.tar.gz --force
 mmctl --local plugin enable com.kazunito.markdown-preview
 ```
 
@@ -64,7 +64,7 @@ Node.js、npm、Goが必要です。
 make dist
 ```
 
-インストール用ファイルは `dist/com.kazunito.markdown-preview-0.1.2.tar.gz` に生成されます。
+インストール用ファイルは `dist/com.kazunito.markdown-preview-0.1.3.tar.gz` に生成されます。
 
 ### 制限事項
 
@@ -111,7 +111,7 @@ Custom file previews are not currently supported in Mattermost Mobile.
 Alternatively, install it on the Mattermost server using local mode:
 
 ```sh
-mmctl --local plugin add com.kazunito.markdown-preview-0.1.2.tar.gz --force
+mmctl --local plugin add com.kazunito.markdown-preview-0.1.3.tar.gz --force
 mmctl --local plugin enable com.kazunito.markdown-preview
 ```
 
@@ -125,7 +125,7 @@ Node.js, npm, and Go are required.
 make dist
 ```
 
-The installable bundle is generated at `dist/com.kazunito.markdown-preview-0.1.2.tar.gz`.
+The installable bundle is generated at `dist/com.kazunito.markdown-preview-0.1.3.tar.gz`.
 
 ### Known limitations
 

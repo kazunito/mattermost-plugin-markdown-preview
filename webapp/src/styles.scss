@@ -6,6 +6,8 @@
     --markdown-preview-button-color: var(--button-color, #fff);
     --markdown-preview-muted: rgba(var(--center-channel-color-rgb, 63, 67, 80), 0.64);
     --markdown-preview-subtle: rgba(var(--center-channel-color-rgb, 63, 67, 80), 0.06);
+    --markdown-preview-code-bg: rgba(var(--center-channel-color-rgb, 63, 67, 80), 0.14);
+    --markdown-preview-code-border: rgba(var(--center-channel-color-rgb, 63, 67, 80), 0.24);
     --markdown-preview-highlight: var(--link-color, #1c58d9);
 
     display: flex;
@@ -302,11 +304,15 @@
 
             code {
                 display: inline;
-                padding: 0.15em 0.35em;
-                background: var(--markdown-preview-subtle);
+                padding: 0.12em 0.4em;
+                border: 1px solid var(--markdown-preview-code-border);
+                background: var(--markdown-preview-code-bg);
+                box-decoration-break: clone;
+                font-weight: 600;
                 line-height: inherit;
                 white-space: normal;
                 word-break: break-word;
+                -webkit-box-decoration-break: clone;
             }
         }
 
