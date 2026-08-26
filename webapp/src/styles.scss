@@ -294,6 +294,22 @@
             font-size: 0.9em;
         }
 
+        // Mattermost wraps inline code in this span and preserves whitespace for
+        // chat posts. In a document preview, that can turn a multiline code span
+        // into a large empty-looking box instead of a compact inline label.
+        &.post-message__text .codespan__pre-wrap {
+            display: inline;
+
+            code {
+                display: inline;
+                padding: 0.15em 0.35em;
+                background: var(--markdown-preview-subtle);
+                line-height: inherit;
+                white-space: normal;
+                word-break: break-word;
+            }
+        }
+
         hr {
             margin: 40px 0;
             border: 0;
